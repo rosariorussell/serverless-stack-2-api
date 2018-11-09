@@ -1,9 +1,9 @@
 Resources:
-  NotesTable:
+  TasksTable:
     Type: AWS::DynamoDB::Table
     Properties:
       # Generate a name based on the stage
-      TableName: ${self:custom.stage}-notes
+      TableName: ${self:custom.stage}-tasks
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
