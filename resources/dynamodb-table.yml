@@ -3,7 +3,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       # Generate a name based on the stage
-      TableName: ${self:custom.stage}-tasks
+      TableName: topcofounder-tasks-${self:custom.stage}
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
