@@ -1,29 +1,19 @@
-service: topcofounder-tasks
+service: topcofounder-tasks-v1
 
-# Use the serverless-webpack plugin to transpile ES6
 plugins:
   - serverless-webpack
   - serverless-offline
 
-# serverless-webpack configuration
-# Enable auto-packing of external modules
 custom:
-  # Our stage is based on what is passed in when running serverless
-  # commands. Or fallsback to what we have set in the provider section.
   stage: ${opt:stage, self:provider.stage}
-  # Set the table name here so we can use it while testing locally
   tableName: topcofounder-tasks-${self:custom.stage}
-  # Set our DynamoDB throughput for prod and all other non-prod stages.
   tableThroughputs:
     prod: 5
     default: 1
   tableThroughput: ${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}
-  # Load our webpack config
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
-  # Load our secret environment variables based on the current stage.
-  # Fallback to default if it is not in prod.
   environment: ${file(env.yml):${self:custom.stage}, file(env.yml):default}
 
 provider:
@@ -32,9 +22,6 @@ provider:
   stage: dev
   region: us-east-1
 
-
-  # These environment variables are made available to our functions
-  # under process.env.
   environment:
     tableName: ${self:custom.tableName}
     stripeSecretKey: ${self:custom.environment.stripeSecretKey}
@@ -49,18 +36,10 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      # Restrict our IAM role permissions to
-      # the specific table for the stage
       Resource:
         - "Fn::GetAtt": [ TasksTable, Arn ]
 
 functions:
-  # Defines an HTTP API endpoint that calls the main function in create.js
-  # - path: url path is /tasks
-  # - method: POST request
-  # - cors: enabled CORS (Cross-Origin Resource Sharing) for browser cross
-  #     domain api call
-  # - authorizer: authenticate using the AWS IAM role
   create:
     handler: create.main
     events:
@@ -71,9 +50,6 @@ functions:
           authorizer: aws_iam
 
   get:
-    # Defines an HTTP API endpoint that calls the main function in get.js
-    # - path: url path is /tasks/{id}
-    # - method: GET request
     handler: get.main
     events:
       - http:
@@ -83,9 +59,6 @@ functions:
           authorizer: aws_iam
 
   list:
-    # Defines an HTTP API endpoint that calls the main function in list.js
-    # - path: url path is /tasks
-    # - method: GET request
     handler: list.main
     events:
       - http:
@@ -95,9 +68,6 @@ functions:
           authorizer: aws_iam
 
   update:
-    # Defines an HTTP API endpoint that calls the main function in update.js
-    # - path: url path is /tasks/{id}
-    # - method: PUT request
     handler: update.main
     events:
       - http:
@@ -107,9 +77,6 @@ functions:
           authorizer: aws_iam
 
   delete:
-    # Defines an HTTP API endpoint that calls the main function in delete.js
-    # - path: url path is /tasks/{id}
-    # - method: DELETE request
     handler: delete.main
     events:
       - http:
@@ -127,12 +94,8 @@ functions:
           cors: true
           authorizer: aws_iam
 
-# Create our resources with separate CloudFormation templates
 resources:
-  # DynamoDB
   - ${file(resources/dynamodb-table.yml)}
-  # S3
   - ${file(resources/s3-bucket.yml)}
-  # Cognito
   - ${file(resources/cognito-user-pool.yml)}
   - ${file(resources/cognito-identity-pool.yml)}
