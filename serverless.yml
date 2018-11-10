@@ -1,4 +1,4 @@
-service: topcofounder-tasks-v1
+service: topcofounder-tasks1
 
 plugins:
   - serverless-webpack
@@ -6,7 +6,7 @@ plugins:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
-  tableName: topcofounder-tasks-${self:custom.stage}
+  tableName: topcofounder-tasks1-${self:custom.stage}
   tableThroughputs:
     prod: 5
     default: 1
