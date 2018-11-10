@@ -7,12 +7,12 @@ Resources:
       AttributeDefinitions:
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: noteId
+        - AttributeName: taskId
           AttributeType: S
       KeySchema:
         - AttributeName: userId
           KeyType: HASH
-        - AttributeName: noteId
+        - AttributeName: taskId
           KeyType: RANGE
       # Set the capacity based on the stage
       ProvisionedThroughput:
